@@ -18,45 +18,46 @@
 package main
 
 import (
-	"context"
+	// "context"
 	"fmt"
 	"net/http"
 	"time"
 
-	logs "github.com/CocaineCong/tangseng/pkg/logger"
+	// logs "github.com/CocaineCong/tangseng/pkg/logger"
 
-	"github.com/CocaineCong/tangseng/consts"
-	"github.com/CocaineCong/tangseng/pkg/tracing"
+	// "github.com/CocaineCong/tangseng/consts"
+	// "github.com/CocaineCong/tangseng/pkg/tracing"
 
-	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc/resolver"
+	// "github.com/sirupsen/logrus"
+	// "google.golang.org/grpc/resolver"
 
 	"github.com/CocaineCong/tangseng/app/gateway/routes"
-	"github.com/CocaineCong/tangseng/app/gateway/rpc"
+	// "github.com/CocaineCong/tangseng/app/gateway/rpc"
 	"github.com/CocaineCong/tangseng/config"
 	"github.com/CocaineCong/tangseng/loading"
-	"github.com/CocaineCong/tangseng/pkg/discovery"
+	// "github.com/CocaineCong/tangseng/pkg/discovery"
 )
 
 func main() {
 	loading.Loading()
-	rpc.Init()
-	////注册tracer
-	provider := tracing.InitTracerProvider(config.Conf.Jaeger.Addr, consts.ServiceName)
-	defer func() {
-		if provider == nil {
-			return
-		}
-		if err := provider(context.Background()); err != nil {
-			logs.LogrusObj.Errorf("Failed to shutdown: %v", err)
-		}
-	}()
+	// rpc.Init()
+	//注册tracer
+	// provider := tracing.InitTracerProvider(config.Conf.Jaeger.Addr, consts.ServiceName)
+	// defer func() {
+	// 	if provider == nil {
+	// 		return
+	// 	}
+	// 	if err := provider(context.Background()); err != nil {
+	// 		logs.LogrusObj.Errorf("Failed to shutdown: %v", err)
+	// 	}
+	// }()
 	// etcd注册
-	etcdAddress := []string{config.Conf.Etcd.Address}
-	etcdRegister := discovery.NewResolver(etcdAddress, logrus.New())
-	defer etcdRegister.Close()
-	resolver.Register(etcdRegister)
-	go startListen() // 转载路由
+	// etcdAddress := []string{config.Conf.Etcd.Address}
+	// etcdRegister := discovery.NewResolver(etcdAddress, logrus.New())
+	// defer etcdRegister.Close()
+	// resolver.Register(etcdRegister)
+	// go startListen() // 转载路由
+	startListen() // 转载路由
 	// {
 	// 	osSignals := make(chan os.Signal, 1)
 	// 	signal.Notify(osSignals, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
@@ -66,7 +67,9 @@ func main() {
 }
 
 func startListen() {
+	fmt.Printf("ginRouter := routes.NewRouter()\n")
 	ginRouter := routes.NewRouter()
+	fmt.Printf("ginRouter := routes.NewRouter() done\n")
 	server := &http.Server{
 		Addr:           config.Conf.Server.Port,
 		Handler:        ginRouter,
@@ -74,12 +77,13 @@ func startListen() {
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
+	fmt.Printf("gateway listen on :%v \n", config.Conf.Server.Port)
 	if err := server.ListenAndServe(); err != nil {
 		fmt.Printf("绑定HTTP到 %s 失败！可能是端口已经被占用，或用户权限不足 \n", config.Conf.Server.Port)
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("gateway listen on :%v \n", config.Conf.Server.Port)
+	
 	// go func() {
 	// 	// TODO 优雅关闭 有点问题，后续优化一下
 	// 	shutdown.GracefullyShutdown(server)

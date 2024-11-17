@@ -15,24 +15,28 @@
 // specific language governing permissions and limitations
 // under the License.
 
-package loading
+package middleware
 
 import (
-	"github.com/CocaineCong/tangseng/config"
-	// "github.com/CocaineCong/tangseng/pkg/kfk"
-	// log "github.com/CocaineCong/tangseng/pkg/logger"
-	// "github.com/CocaineCong/tangseng/repository/mysql/db"
-	// "github.com/CocaineCong/tangseng/repository/redis"
+	"github.com/gin-gonic/gin"
+    "golang.org/x/time/rate"
 )
 
-// Loading 全局loading
-func Loading() {
-	// es.InitEs()
-	config.InitConfig()
-	// log.InitLog()
+var limiter *rate.Limiter
 
-	// db.InitDB()
-	// redis.InitRedis()
-	// kfk.InitKafka()
-	// dao.InitMysqlDirectUpload(ctx)
+func init() {
+	limiter = rate.NewLimiter(1000, 30000)
+}
+
+// 限流中间件，基于令牌桶
+func RequestLimiting() gin.HandlerFunc {
+	return func(c *gin.Context) {
+        if limiter.Allow() {
+			println("pass")
+			c.Next()
+        } else {
+			println("abort")
+           c.Abort()
+        }
+	}
 }

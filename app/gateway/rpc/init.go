@@ -33,7 +33,7 @@ import (
 	"google.golang.org/grpc/resolver"
 
 	"github.com/CocaineCong/tangseng/config"
-	"github.com/CocaineCong/tangseng/consts"
+	// "github.com/CocaineCong/tangseng/consts"
 	"github.com/CocaineCong/tangseng/idl/pb/favorite"
 	"github.com/CocaineCong/tangseng/idl/pb/index_platform"
 	"github.com/CocaineCong/tangseng/idl/pb/search_engine"
@@ -63,9 +63,9 @@ func Init() {
 	defer Register.Close()
 	// initClient(config.Conf.Domain[consts.UserServiceName].Name, &UserClient)
 	// initClient(config.Conf.Domain[consts.FavoriteServiceName].Name, &FavoriteClient)
-	initClient(config.Conf.Domain[consts.SearchServiceName].Name, &SearchEngineClient)
-	initClient(config.Conf.Domain[consts.IndexPlatformName].Name, &IndexPlatformClient)
-	initClient(config.Conf.Domain[consts.SearchVectorName].Name, &SearchVectorClient)
+	// initClient(config.Conf.Domain[consts.SearchServiceName].Name, &SearchEngineClient)
+	// initClient(config.Conf.Domain[consts.IndexPlatformName].Name, &IndexPlatformClient)
+	// initClient(config.Conf.Domain[consts.SearchVectorName].Name, &SearchVectorClient)
 }
 
 // initClient 初始化所有的rpc客户端

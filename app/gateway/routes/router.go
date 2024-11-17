@@ -37,6 +37,7 @@ func NewRouter() *gin.Engine {
 	r.Use(sessions.Sessions("mysession", store))
 	r.GET("/metrics", prometheus.GatewayHandler())
 	v1 := r.Group("/api/v1")
+	v1.Use(middleware.RequestLimiting())
 	{
 		v1.GET("ping", func(context *gin.Context) {
 			context.JSON(200, "success")
